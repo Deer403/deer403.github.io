@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Docker 安装</title>
+    <url>/2023/02/16/Docker-%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h1 id="docker安装与配置"><a href="#docker安装与配置" class="headerlink" title="docker安装与配置"></a>docker安装与配置</h1><h2 id="在windows安装"><a href="#在windows安装" class="headerlink" title="在windows安装"></a>在windows安装</h2><p>因为windows的docker现在是基于wsl来运行的，所以需要先安装好对应环境，否则安装好docker后，也会报错。</p>
+<ol>
+<li><p>在cmd里输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wsl --update</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装好微软提供的linux内核升级包，根据系统类型，进行升级。<br>微软官方提供的内核包以及对应文档<a href="https://learn.microsoft.com/zh-cn/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package">链接</a></p>
+</li>
+<li><p>在windows系统开启对应功能</p>
+<ul>
+<li>适用于 Linux 的 Windows 子系统</li>
+<li>Hypex</li>
+<li>启用虚拟机功能</li>
+</ul>
+</li>
+<li><p>将wsl2设置为默认版本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wsl --set-default-version 2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载docker官方安装包，安装docker即可。前面步骤完成了，这一步基本也不会出问题。</p>
+</li>
+</ol>
+<h2 id="在linux安装"><a href="#在linux安装" class="headerlink" title="在linux安装"></a>在linux安装</h2><p>以下操作需要在 root 用户下完成，请使用 <code>sudo -i</code> 或 <code>su root</code> 切换到 root 用户进行操作。</p>
+<p>首先，安装一些必要的软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt upgrade -y</span><br><span class="line">apt install curl vim wget gnupg dpkg apt-transport-https lsb-release ca-certificates</span><br></pre></td></tr></table></figure>
+
+<p>然后加入 Docker 的 GPG 公钥和 apt 源：<br>Debian</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL https://download.docker.com/linux/debian/gpg | gpg --dearmor &gt; /usr/share/keyrings/docker-ce.gpg</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb [arch=<span class="subst">$(dpkg --print-architecture)</span> signed-by=/usr/share/keyrings/docker-ce.gpg] https://download.docker.co</span></span><br></pre></td></tr></table></figure>
+
+<p>国内机器可以用<a href="https://mirrors.tuna.tsinghua.edu.cn/">清华 TUNA</a>的国内源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sS https://download.docker.com/linux/debian/gpg | gpg --dearmor &gt; /usr/share/keyrings/docker-ce.gpg</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb [arch=<span class="subst">$(dpkg --print-architecture)</span> signed-by=/usr/share/keyrings/docker-ce.gpg] https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/debian <span class="subst">$(lsb_release -sc)</span> stable&quot;</span> &gt; /etc/apt/sources.list.d/docker.list</span><br></pre></td></tr></table></figure>
+<p>然后更新系统后即可安装 Docker CE：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt install docker-ce docker-ce-cli containerd.io docker-compose-plugin</span><br></pre></td></tr></table></figure>
+<p>此时可以使用 <code>docker version</code> 命令检查是否安装成功：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@debian ~ <span class="comment"># docker version</span></span><br><span class="line">Client: Docker Engine - Community</span><br><span class="line"> Version:           23.0.1</span><br><span class="line"> API version:       1.42</span><br><span class="line"> Go version:        go1.19.5</span><br><span class="line"> Git commit:        a5ee5b1</span><br><span class="line"> Built:             Thu Feb  9 19:46:54 2023</span><br><span class="line"> OS/Arch:           linux/amd64</span><br><span class="line"> Context:           default</span><br><span class="line"></span><br><span class="line">Server: Docker Engine - Community</span><br><span class="line"> Engine:</span><br><span class="line">  Version:          23.0.1</span><br><span class="line">  API version:      1.42 (minimum version 1.12)</span><br><span class="line">  Go version:       go1.19.5</span><br><span class="line">  Git commit:       bc3805a</span><br><span class="line">  Built:            Thu Feb  9 19:46:54 2023</span><br><span class="line">  OS/Arch:          linux/amd64</span><br><span class="line">  Experimental:     <span class="literal">false</span></span><br><span class="line"> containerd:</span><br><span class="line">  Version:          1.6.16</span><br><span class="line">  GitCommit:        31aa4358a36870b21a992d3ad2bef29e1d693bec</span><br><span class="line"> runc:</span><br><span class="line">  Version:          1.1.4</span><br><span class="line">  GitCommit:        v1.1.4-0-g5fd4c4d</span><br><span class="line"> docker-init:</span><br><span class="line">  Version:          0.19.0</span><br><span class="line">  GitCommit:        de40ad0</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="docker-异常处理"><a href="#docker-异常处理" class="headerlink" title="docker 异常处理"></a>docker 异常处理</h2><p>在windows11下，经常开机后莫名其妙就报错，无法正常启动。<br>使用以下命令一般就能修好</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netsh winsock reset</span><br></pre></td></tr></table></figure>
+<p>推测是因为网络通信部分，docker和windows系统的处理出现了问题。</p>
+<blockquote>
+<p>参考文章如下:<br><a href="https://u.sb/debian-install-docker/">https://u.sb/debian-install-docker/</a></p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2023/02/14/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+</search>
